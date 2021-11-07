@@ -3,8 +3,10 @@ package com.bridgelabz.employeepayrollapp.implementation;
 import com.bridgelabz.employeepayrollapp.dto.EmployeePayrollDTO;
 import com.bridgelabz.employeepayrollapp.model.EmployeePayrollData;
 
+import java.util.List;
+
 public interface IEmployeePayrollService {
-    EmployeePayrollData getEmployeePayrollData();
+    List<EmployeePayrollData> getEmployeePayrollData();
 
     EmployeePayrollData getEmployeePayrollDataById(int empId);
 
