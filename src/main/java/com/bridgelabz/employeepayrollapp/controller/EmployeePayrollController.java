@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/employeepayrollservice")
 public class EmployeePayrollController {
@@ -18,7 +20,7 @@ public class EmployeePayrollController {
 
     @GetMapping(value = {"/", "", "/get"})
     public ResponseEntity<ResponseDTO> getEmployeePayrollData() {
-        EmployeePayrollData empData = null;
+        List<EmployeePayrollData> empData = null;
         empData = employeePayrollService.getEmployeePayrollData();
         ResponseDTO responseDTO = new ResponseDTO("Get call successful", empData);
         return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
