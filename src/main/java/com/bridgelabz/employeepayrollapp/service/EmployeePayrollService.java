@@ -4,48 +4,51 @@ import com.bridgelabz.employeepayrollapp.dto.EmployeePayrollDTO;
 import com.bridgelabz.employeepayrollapp.exception.EmployeePayrollException;
 import com.bridgelabz.employeepayrollapp.implementation.IEmployeePayrollService;
 import com.bridgelabz.employeepayrollapp.model.EmployeePayrollData;
+import com.bridgelabz.employeepayrollapp.repository.EmployeePayrollRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
+
 @Service
 public class EmployeePayrollService implements IEmployeePayrollService {
 
-    List<EmployeePayrollData> employeePayrollDataList = new ArrayList<>();
+    @Autowired
+    EmployeePayrollRepository employeePayrollRepository;
 
     @Override
     public List<EmployeePayrollData> getEmployeePayrollData() {
-        return employeePayrollDataList;
+        return employeePayrollRepository.findAll();
     }
 
     @Override
     public EmployeePayrollData getEmployeePayrollDataById(int empId) {
-        return employeePayrollDataList.stream()
-                .filter(empData -> empData.getId() == empId)
-                .findFirst()
+        return employeePayrollRepository.findById(empId)
                 .orElseThrow(() -> new EmployeePayrollException("Employee Not found"));
     }
 
     @Override
     public EmployeePayrollData createEmployeePayrollData(EmployeePayrollDTO employeePayrollDTO) {
-        EmployeePayrollData employeePayrollData = new EmployeePayrollData(employeePayrollDataList.size()+1, employeePayrollDTO);
-        employeePayrollDataList.add(employeePayrollData);
-        return employeePayrollData;
-
+        EmployeePayrollData employeePayrollData = new EmployeePayrollData(employeePayrollDTO);
+        log.debug("Emp data", employeePayrollData);
+        return employeePayrollRepository.save(employeePayrollData);
     }
 
     @Override
     public EmployeePayrollData updateEmployeePayrollData(int empId, EmployeePayrollDTO employeePayrollDTO) {
         EmployeePayrollData employeePayrollData = this.getEmployeePayrollDataById(empId);
-        employeePayrollData.setName(employeePayrollDTO.getName());
-        employeePayrollData.setSalary(employeePayrollDTO.getSalary());
-        employeePayrollDataList.add(empId-1, employeePayrollData);
+        employeePayrollData.updateEmployeePayrollData(employeePayrollDTO);
+        employeePayrollRepository.save(employeePayrollData);
         return employeePayrollData;
     }
 
     @Override
     public void deteleEmployeePayrollDataById(int empId) {
-        employeePayrollDataList.remove(empId-1);
+        EmployeePayrollData employeePayrollData = this.getEmployeePayrollDataById(empId);
+        employeePayrollRepository.delete(employeePayrollData);
     }
 }
